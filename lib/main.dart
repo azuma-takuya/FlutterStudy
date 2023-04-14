@@ -25,11 +25,15 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+  int _counter = 99;
 
   void _incrementCounter() {
     setState(() {
-      _counter++;
+      if(_counter < 100) {
+        _counter++;
+      } else {
+        print('これ以上押せません。');
+      }
     });
   }
 

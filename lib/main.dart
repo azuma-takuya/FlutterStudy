@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 void main() => runApp(MyApp());
@@ -32,10 +33,24 @@ class _MyHomePageState extends State<MyHomePage> {
       if(_counter < 100) {
         _counter++;
       } else {
-        print('これ以上押せません。');
+        showDialog(
+            context: context,
+            builder: (context) {
+              return CupertinoAlertDialog(
+                content: Text('これ以上押せません。'),
+                actions: [
+                  CupertinoDialogAction(
+                    child: Text('OK'),
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                ],
+              );
+            }
+        );
       }
     });
   }
+
 
   @override
   Widget build(BuildContext context) {

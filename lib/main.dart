@@ -1,18 +1,32 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'CountUp.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+import 'todo_list.dart';
+import 'todo_create.dart';
 
-void main() => runApp(MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  runApp(const MyApp());
+}
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Counter App',
+      title: 'Flutter Demo',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: CountUpPage(title: 'Flutter Counter App'),
+      routes: {
+        '/': (context) => const TodoList(),
+        '/todo_create': (context) => const TodoCreate(),
+        '/todo_list': (context) => const TodoList(),
+      },
     );
   }
 }

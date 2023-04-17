@@ -1,32 +1,61 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart';
-import 'todo_list.dart';
-import 'todo_create.dart';
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
-  runApp(const MyApp());
-}
+void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
+      title: 'My Todo List',
+      home: TodoList(),
+    );
+  }
+}
+
+class TodoList extends StatefulWidget {
+  @override
+  _TodoListState createState() => _TodoListState();
+}
+
+class _TodoListState extends State<TodoList> {
+  final List<String> _todos = [];
+  final List<Key> _keys = [];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('My Todo List'),
+        ),
+      body: Column(
+        children: [
+          TextField(
+            decoration: InputDecoration(
+              hintText: 'Add new todo',
+            ),
+            onSubmitted: (value) {
+              setState(() {
+                _todos.add(value);
+                _keys.add(Key(value)); // キーを追加する
+              });
+              },
+          ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: _todos.length,
+              itemBuilder: (context, index) {
+                return ListTile(
+                  key: _keys[index], // キーを指定する
+                  title: Text(_todos[index]),
+                  onTap: () {
+                    // TODOアイテムがタップされたときの処理
+                  },
+                );
+                },
+            ),
+          ),
+        ],
       ),
-      routes: {
-        '/': (context) => const TodoList(),
-        '/todo_create': (context) => const TodoCreate(),
-        '/todo_list': (context) => const TodoList(),
-      },
     );
   }
 }

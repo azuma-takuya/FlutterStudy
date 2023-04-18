@@ -1,16 +1,16 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class CountUp extends StatefulWidget {
-  const CountUp({Key? key, required this.title}) : super(key: key);
+class CountUpPage extends StatefulWidget {
+  const CountUpPage({super.key, required this.title}) : super();
 
   final String title;
 
   @override
-  _CountUpState createState() => _CountUpState();
+  State createState() => _CountUpPageState();
 }
 
-class _CountUpState extends State<CountUp> {
+class _CountUpPageState extends State<CountUpPage> {
   int _counter = 0;
 
   void _incrementCounter() {
@@ -22,10 +22,10 @@ class _CountUpState extends State<CountUp> {
             context: context,
             builder: (context) {
               return CupertinoAlertDialog(
-                content: Text('これ以上押せません。'),
+                content: const Text('これ以上押せません。'),
                 actions: [
                   CupertinoDialogAction(
-                    child: Text('OK'),
+                    child: const Text('OK'),
                     onPressed: () => Navigator.pop(context),
                   ),
                 ],
@@ -56,7 +56,7 @@ class _CountUpState extends State<CountUp> {
       floatingActionButton: FloatingActionButton(
         onPressed: _incrementCounter,
         tooltip: 'Increment',
-        child: Icon(Icons.add),
+        child: const Icon(Icons.add),
       ),
     );
   }

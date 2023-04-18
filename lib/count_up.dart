@@ -1,16 +1,16 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class CountUpPage extends StatefulWidget {
-  CountUpPage({Key? key, required this.title}) : super(key: key);
+class CountUp extends StatefulWidget {
+  const CountUp({Key? key, required this.title}) : super(key: key);
 
   final String title;
 
   @override
-  _CountUpPageState createState() => _CountUpPageState();
+  _CountUpState createState() => _CountUpState();
 }
 
-class _CountUpPageState extends State<CountUpPage> {
+class _CountUpState extends State<CountUp> {
   int _counter = 0;
 
   void _incrementCounter() {

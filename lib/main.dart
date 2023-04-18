@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'CountUp.dart';
+import 'count_up.dart';
 
 void main() => runApp(MyApp());
 
@@ -12,7 +12,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: CountUpPage(title: 'Flutter Counter App'),
+      home: CountUp(title: 'Flutter Counter App'),
     );
   }
 }

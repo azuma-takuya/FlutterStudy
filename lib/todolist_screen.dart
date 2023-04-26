@@ -4,10 +4,10 @@ class TodolistScreen extends StatefulWidget {
   const TodolistScreen({super.key});
 
   @override
-  _TodoListState createState() => _TodoListState();
+  TodoListState createState() => TodoListState();
 }
 
-class _TodoListState extends State<TodolistScreen> {
+class TodoListState extends State<TodolistScreen> {
   final _formKey = GlobalKey<FormState>();
   final _editKey = GlobalKey<FormState>();
   final List<String> _todos = [];
@@ -34,7 +34,7 @@ class _TodoListState extends State<TodolistScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('編集'),
+          title: const Text('編集'),
           content: Form(
             key: _editKey,
             child: TextFormField(
@@ -59,7 +59,7 @@ class _TodoListState extends State<TodolistScreen> {
                   Navigator.of(context).pop();
                 }
               },
-              child: Text('OK'),
+              child: const Text('OK'),
             ),
           ],
         );

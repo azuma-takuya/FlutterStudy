@@ -67,29 +67,6 @@ class _TodoListState extends State<TodolistScreen> {
     );
   }
 
-  //   return TextFormField(
-  //     key: Key(_todos[index]),
-  //     controller: TextEditingController(text: _todos[index]),
-  //     validator: (value) {
-  //       if (value == null || value.isEmpty) {
-  //         return 'タイトルを入力してください';
-  //       }
-  //       if (_todos.contains(value)) {
-  //         return 'このデータはすでに存在します';
-  //       }
-  //       return null;
-  //     },
-  //
-  //     onFieldSubmitted: (newValue) {
-  //       if (_formKey.currentState!.validate()) {
-  //         setState(() {
-  //           _todos[index] = newValue;
-  //         });
-  //       }
-  //     },
-  //   );
-  // }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

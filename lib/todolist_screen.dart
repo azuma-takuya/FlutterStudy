@@ -29,7 +29,7 @@ class TodoListState extends State<TodolistScreen> {
   }
 
   void editTask(String value, int index) {
-    _editController.text = _todos[index];
+    _editController.text = value;
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -101,6 +101,7 @@ class TodoListState extends State<TodolistScreen> {
               child: ListView.builder(
                 itemCount: _todos.length,
                 itemBuilder: (context, index) {
+                  final todoList = _todos[index];
                   // 編集状態の場合、テキストフィールドを表示
                   return Row(
                     mainAxisSize: MainAxisSize.min,
@@ -108,11 +109,11 @@ class TodoListState extends State<TodolistScreen> {
                       // 通常のリストアイテム表示
                       Expanded(
                           child: ListTile(
-                        key: Key(_todos[index]),
-                        title: Text(_todos[index]),
+                        key: Key(todoList),
+                        title: Text(todoList),
                         onTap: () {
                           // ボタンクリックで編集フラグ切り替え
-                          editTask(_todos[index], index);
+                          editTask(todoList, index);
                         },
                         trailing: IconButton(
                           icon: const Icon(Icons.delete),

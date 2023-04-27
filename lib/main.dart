@@ -1,19 +1,19 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'count_up_page.dart';
+import 'todolist_screen.dart';
 
-void main() => runApp(const MyApp());
+void main() {
+  runApp(const MyApp());
+}
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key}):super();
+  const MyApp({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Counter App',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: const CountUpPage(title: 'Flutter Counter App'),
+      title: 'My Todo List',
+      theme: ThemeData(primarySwatch: Colors.blue),
+      home: const TodolistScreen(),
     );
   }
 }

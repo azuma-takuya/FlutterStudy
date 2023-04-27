@@ -73,11 +73,11 @@ class TodoListState extends State<TodolistScreen> {
       appBar: AppBar(
         title: const Text('Todo List'),
       ),
-      body: Form(
-        key: _formKey,
-        child: Column(
-          children: [
-            TextFormField(
+      body: Column(
+        children: [
+          Form(
+            key: _formKey,
+            child: TextFormField(
               controller: _controller,
               decoration: const InputDecoration(
                 hintText: 'Todoリストを追加',
@@ -97,39 +97,39 @@ class TodoListState extends State<TodolistScreen> {
                 }
               },
             ),
-            Expanded(
-              child: ListView.builder(
-                itemCount: _todos.length,
-                itemBuilder: (context, index) {
-                  final todoList = _todos[index];
-                  // 編集状態の場合、テキストフィールドを表示
-                  return Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      // 通常のリストアイテム表示
-                      Expanded(
-                          child: ListTile(
-                        key: Key(todoList),
-                        title: Text(todoList),
-                        onTap: () {
-                          // ボタンクリックで編集フラグ切り替え
-                          editTask(todoList, index);
+          ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: _todos.length,
+              itemBuilder: (context, index) {
+                final todoList = _todos[index];
+                // 編集状態の場合、テキストフィールドを表示
+                return Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // 通常のリストアイテム表示
+                    Expanded(
+                        child: ListTile(
+                      key: Key(todoList),
+                      title: Text(todoList),
+                      onTap: () {
+                        // ボタンクリックで編集フラグ切り替え
+                        editTask(todoList, index);
+                      },
+                      trailing: IconButton(
+                        icon: const Icon(Icons.delete),
+                        //アイコンクリックで削除
+                        onPressed: () {
+                          deleteTask(index);
                         },
-                        trailing: IconButton(
-                          icon: const Icon(Icons.delete),
-                          //アイコンクリックで削除
-                          onPressed: () {
-                            deleteTask(index);
-                          },
-                        ),
-                      ))
-                    ],
-                  );
-                },
-              ),
+                      ),
+                    ))
+                  ],
+                );
+              },
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

@@ -35,6 +35,7 @@ class StopwatchPageState extends State<StopwatchPage> {
   Timer? _timer;
   Duration _displayDuration = Duration();
 
+  // 計測されてない場合に計測をする
   void _startStopwatch() {
     if (!_stopwatch.isRunning) {
       _timer = Timer.periodic(const Duration(milliseconds: 10), (timer) {
@@ -46,6 +47,7 @@ class StopwatchPageState extends State<StopwatchPage> {
     }
   }
 
+  //計測を止める
   void _stopStopwatch() {
     if (_stopwatch.isRunning) {
       _timer?.cancel();
@@ -53,6 +55,7 @@ class StopwatchPageState extends State<StopwatchPage> {
     }
   }
 
+  //計測をリセットする
   void _resetStopwatch() {
     _timer?.cancel();
     setState(() {
@@ -67,10 +70,12 @@ class StopwatchPageState extends State<StopwatchPage> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          // 少数第二位までの計測時間を表示
           Text(
-            _displayDuration.toString().split('.')[0].padLeft(8, '0'),
+            '${_displayDuration.inMinutes.remainder(60).toString().padLeft(2, '0')}:${_displayDuration.inSeconds.remainder(60).toString().padLeft(2, '0')}.${(_displayDuration.inMilliseconds.remainder(1000) / 10).floor().toString().padLeft(2, '0')}',
             style: const TextStyle(fontSize: 40),
           ),
+
           const SizedBox(height: 32),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,

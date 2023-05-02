@@ -73,7 +73,7 @@ class StopwatchPageState extends State<StopwatchPage> {
           // 少数第二位までの計測時間を表示
           Text(
             '${_displayDuration.inMinutes.remainder(60).toString().padLeft(2, '0')}:${_displayDuration.inSeconds.remainder(60).toString().padLeft(2, '0')}.${(_displayDuration.inMilliseconds.remainder(1000) / 10).floor().toString().padLeft(2, '0')}',
-            style: const TextStyle(fontSize: 40),
+            style: const TextStyle(fontSize: 40, fontFamily: 'Courier'),
           ),
 
           const SizedBox(height: 32),

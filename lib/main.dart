@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'todolist_screen.dart';
+import 'package:countup/stopwatch_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -11,9 +11,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'My Todo List',
+      title: 'StopWatch',
       theme: ThemeData(primarySwatch: Colors.blue),
-      home: const TodolistScreen(),
+      home: const StopwatchScreen(),
     );
   }
 }

@@ -33,7 +33,7 @@ class StopwatchPage extends StatefulWidget {
 class StopwatchPageState extends State<StopwatchPage> {
   final Stopwatch _stopwatch = Stopwatch();
   Timer? _timer;
-  Duration _displayDuration = Duration();
+  Duration _displayDuration = const Duration();
 
   // 計測されてない場合に計測をする
   void _startStopwatch() {
@@ -57,11 +57,23 @@ class StopwatchPageState extends State<StopwatchPage> {
 
   //計測をリセットする
   void _resetStopwatch() {
+    if (_stopwatch.isRunning) {
+      _stopStopwatch();
+    }
     _timer?.cancel();
     setState(() {
+      _displayDuration = const Duration();
       _stopwatch.reset();
-      _displayDuration = Duration();
     });
+  }
+
+  String _formatTime() {
+    '${_displayDuration.inMinutes.remainder(60).toString().padLeft(
+        2, '0')}:${_displayDuration.inSeconds.remainder(60).toString().padLeft(
+        2, '0')}.${(_displayDuration.inMilliseconds.remainder(1000) / 10)
+        .floor().toString()
+        .padLeft(2, '0')}';
+    return _formatTime();
   }
 
   @override
@@ -72,10 +84,10 @@ class StopwatchPageState extends State<StopwatchPage> {
         children: [
           // 少数第二位までの計測時間を表示
           Text(
+            // _formatTime,
             '${_displayDuration.inMinutes.remainder(60).toString().padLeft(2, '0')}:${_displayDuration.inSeconds.remainder(60).toString().padLeft(2, '0')}.${(_displayDuration.inMilliseconds.remainder(1000) / 10).floor().toString().padLeft(2, '0')}',
             style: const TextStyle(fontSize: 40, fontFamily: 'Courier'),
           ),
-
           const SizedBox(height: 32),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,

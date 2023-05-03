@@ -13,7 +13,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'StopWatch',
       theme: ThemeData(primarySwatch: Colors.blue),
-      home: const StopWatchScreen(),
+      home: const StopwatchScreen(),
     );
   }
 }

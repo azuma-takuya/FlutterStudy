@@ -1,36 +1,19 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 
-class StopWatchScreen extends StatefulWidget {
-  const StopWatchScreen({super.key});
+class StopwatchScreen extends StatefulWidget {
+  const StopwatchScreen({super.key});
 
   @override
-  StopWatchState createState() => StopWatchState();
+  StopwatchState createState() => StopwatchState();
 }
 
-class StopWatchState extends State<StopWatchScreen> {
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Stopwatch App'),
-        ),
-        body: const StopwatchPage(),
-      ),
-    );
-  }
+extension _IntZeroPadding on int {
+  String get _toStringWithZeroPadding => toString().padLeft(2, '0');
 }
 
-class StopwatchPage extends StatefulWidget {
-  const StopwatchPage({super.key});
+class StopwatchState extends State<StopwatchScreen> {
 
-  @override
-  StopwatchPageState createState() => StopwatchPageState();
-}
-
-class StopwatchPageState extends State<StopwatchPage> {
   final Stopwatch _stopwatch = Stopwatch();
   Timer? _timer;
   Duration _displayDuration = const Duration();
@@ -68,45 +51,49 @@ class StopwatchPageState extends State<StopwatchPage> {
   }
 
   String formatTime(Duration duration) {
-    String minutes = duration.inMinutes.remainder(60).toString().padLeft(2, '0');
-    String seconds = duration.inSeconds.remainder(60).toString().padLeft(2, '0');
-    String milliseconds = (duration.inMilliseconds.remainder(1000) / 10).floor().toString().padLeft(2, '0');
+    String minutes = duration.inMinutes.remainder(60)._toStringWithZeroPadding;
+    String seconds = duration.inSeconds.remainder(60)._toStringWithZeroPadding;
+    String milliseconds = (duration.inMilliseconds.remainder(1000) / 10).floor()._toStringWithZeroPadding;
     return '$minutes:$seconds.$milliseconds';
   }
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          // 少数第二位までの計測時間を表示
-          Text(
-            // _formatTime,
-            formatTime(_displayDuration),
-            style: const TextStyle(fontSize: 40, fontFamily: 'Courier'),
-          ),
-          const SizedBox(height: 32),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              ElevatedButton(
-                onPressed: _startStopwatch,
-                child: const Text('Start'),
-              ),
-              const SizedBox(width: 16),
-              ElevatedButton(
-                onPressed: _stopStopwatch,
-                child: const Text('Stop'),
-              ),
-              const SizedBox(width: 16),
-              ElevatedButton(
-                onPressed: _resetStopwatch,
-                child: const Text('Reset'),
-              ),
-            ],
-          ),
-        ],
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Stopwatch App'),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // 少数第二位までの計測時間を表示
+            Text(
+              formatTime(_displayDuration),
+              style: const TextStyle(fontSize: 60, fontFamily: 'Courier', fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 32),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton(
+                  onPressed: _startStopwatch,
+                  child: const Text('Start'),
+                ),
+                const SizedBox(width: 16),
+                ElevatedButton(
+                  onPressed: _stopStopwatch,
+                  child: const Text('Stop'),
+                ),
+                const SizedBox(width: 16),
+                ElevatedButton(
+                  onPressed: _resetStopwatch,
+                  child: const Text('Reset'),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -13,7 +13,6 @@ extension _IntZeroPadding on int {
 }
 
 class StopwatchState extends State<StopwatchScreen> {
-
   final Stopwatch _stopwatch = Stopwatch();
   Timer? _timer;
   Duration _displayDuration = const Duration();
@@ -40,15 +39,11 @@ class StopwatchState extends State<StopwatchScreen> {
 
   //計測をリセットする
   void _resetStopwatch() {
-    if (_stopwatch.isRunning) {
-      _stopStopwatch();
+    _displayDuration = const Duration();
+      _stopwatch
+        ..stop()
+        ..reset();
     }
-    _timer?.cancel();
-    setState(() {
-      _displayDuration = const Duration();
-      _stopwatch.reset();
-    });
-  }
 
   String formatTime(Duration duration) {
     String minutes = duration.inMinutes.remainder(60)._toStringWithZeroPadding;
@@ -70,7 +65,10 @@ class StopwatchState extends State<StopwatchScreen> {
             // 少数第二位までの計測時間を表示
             Text(
               formatTime(_displayDuration),
-              style: const TextStyle(fontSize: 60, fontFamily: 'Courier', fontWeight: FontWeight.bold),
+              style: const TextStyle(
+                  fontSize: 60,
+                  fontFamily: 'Courier',
+                  fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 32),
             Row(

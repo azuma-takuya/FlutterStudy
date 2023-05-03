@@ -67,13 +67,11 @@ class StopwatchPageState extends State<StopwatchPage> {
     });
   }
 
-  String _formatTime() {
-    '${_displayDuration.inMinutes.remainder(60).toString().padLeft(
-        2, '0')}:${_displayDuration.inSeconds.remainder(60).toString().padLeft(
-        2, '0')}.${(_displayDuration.inMilliseconds.remainder(1000) / 10)
-        .floor().toString()
-        .padLeft(2, '0')}';
-    return _formatTime();
+  String formatTime(Duration duration) {
+    String minutes = duration.inMinutes.remainder(60).toString().padLeft(2, '0');
+    String seconds = duration.inSeconds.remainder(60).toString().padLeft(2, '0');
+    String milliseconds = (duration.inMilliseconds.remainder(1000) / 10).floor().toString().padLeft(2, '0');
+    return '$minutes:$seconds.$milliseconds';
   }
 
   @override
@@ -85,7 +83,7 @@ class StopwatchPageState extends State<StopwatchPage> {
           // 少数第二位までの計測時間を表示
           Text(
             // _formatTime,
-            '${_displayDuration.inMinutes.remainder(60).toString().padLeft(2, '0')}:${_displayDuration.inSeconds.remainder(60).toString().padLeft(2, '0')}.${(_displayDuration.inMilliseconds.remainder(1000) / 10).floor().toString().padLeft(2, '0')}',
+            formatTime(_displayDuration),
             style: const TextStyle(fontSize: 40, fontFamily: 'Courier'),
           ),
           const SizedBox(height: 32),

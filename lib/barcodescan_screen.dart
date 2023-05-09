@@ -1,0 +1,50 @@
+import 'package:flutter/material.dart';
+import 'package:barcode_scan2/barcode_scan2.dart' as scanner;
+
+class BarcodeScanScreen extends StatefulWidget {
+  const BarcodeScanScreen({super.key});
+
+  @override
+  BarcodeScanState createState() => BarcodeScanState();
+}
+
+class BarcodeScanState extends State<BarcodeScanScreen> {
+
+  String _scanResult = "";
+
+  Future<void> _scanBarcode() async {
+    final result = await scanner.BarcodeScanner.scan();
+    setState(() {
+      _scanResult = result.rawContent;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Barcode Scanner'),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            const Text(
+              'Scan Result:',
+              style: TextStyle(fontSize: 24.0),
+            ),
+            Text(
+              _scanResult,
+              style: const TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _scanBarcode,
+        tooltip: 'Scan',
+        child: const Icon(Icons.camera_alt),
+      ),
+    );
+  }
+}

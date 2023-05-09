@@ -51,6 +51,9 @@ dev_dependencies:
 # following page: https://dart.dev/tools/pub/pubspec
 
 # The following section is specific to Flutter packages.
+
+  pedantic_mono: any
+
 flutter:
 
   # The following line ensures that the Material Icons font is
@@ -88,3 +91,4 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+

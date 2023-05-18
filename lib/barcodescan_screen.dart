@@ -40,9 +40,13 @@ class BarcodeScanState extends State<BarcodeScanScreen> {
           ),
         ],
       )
-          : WebView(
-        initialUrl: 'https://www.amazon.co.jp/dp/$_scanResult',
-        javascriptMode: JavascriptMode.unrestricted,
+          : WebViewWidget(
+        controller: WebViewController()
+          ..setJavaScriptMode(JavaScriptMode.unrestricted)
+          ..setBackgroundColor(Colors.white)
+          ..loadRequest(Uri.parse('https://www.amazon.co.jp/dp/$_scanResult')),
+        // initialUrl: 'https://www.amazon.co.jp/dp/$_scanResult',
+        // javascriptMode: JavascriptMode.unrestricted,
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _scanBarcode,

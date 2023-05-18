@@ -1,3 +1,4 @@
+import 'package:webview_flutter/webview_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:barcode_scan2/barcode_scan2.dart' as scanner;
 
@@ -9,7 +10,6 @@ class BarcodeScanScreen extends StatefulWidget {
 }
 
 class BarcodeScanState extends State<BarcodeScanScreen> {
-
   String _scanResult = "";
 
   Future<void> _scanBarcode() async {
@@ -25,20 +25,24 @@ class BarcodeScanState extends State<BarcodeScanScreen> {
       appBar: AppBar(
         title: const Text('Barcode Scanner'),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'Scan Result:',
-              style: TextStyle(fontSize: 24.0),
-            ),
-            Text(
-              _scanResult,
-              style: const TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
-            ),
-          ],
-        ),
+      body: _scanResult.isEmpty
+          ? Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          const Text(
+            'Scan Result:',
+            style: TextStyle(fontSize: 24.0),
+          ),
+          Text(
+            _scanResult,
+            style: const TextStyle(
+                fontSize: 20.0, fontWeight: FontWeight.bold),
+          ),
+        ],
+      )
+          : WebView(
+        initialUrl: 'https://www.amazon.com/dp/$_scanResult',
+        javascriptMode: JavascriptMode.unrestricted,
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _scanBarcode,

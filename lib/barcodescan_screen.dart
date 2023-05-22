@@ -11,38 +11,32 @@ class BarcodeScanScreen extends StatefulWidget {
 
 extension JanToIsbnStringExtension on String {
   String convertJanToIsbn() {
-
     const janCodeLength = 13;
     const startIsbnIndex = 3;
     const endIsbnIndex = 12;
     const checkDigitModulo = 11;
     const checkDigitXValue = 10;
 
-    if (length == janCodeLength) {
-      var isbn = substring(startIsbnIndex, endIsbnIndex);
-      var checkDigit = 0;
-
-      final isbnList = isbn.split('');
-
-      try {
-        checkDigit = isbnList.asMap().entries.map((e) {
-          return int.parse(e.value) * (e.key + 1);
-        }).reduce((value, element) => value + element);
-      } on FormatException {
-        throw const FormatException('不正なJANコードです');
-      }
-
-      checkDigit %= checkDigitModulo;
-
-      if (checkDigit == checkDigitXValue) {
-        isbn += 'X';
-      } else {
-        isbn += checkDigit.toString();
-      }
-      return isbn;
-    } else {
+    if (length != janCodeLength) {
       throw const FormatException('不正なJANコードです');
     }
+
+    var isbn = substring(startIsbnIndex, endIsbnIndex);
+    var checkDigit = 0;
+
+    final isbnList = isbn.split('');
+
+    try {
+      checkDigit = isbnList.asMap().entries.map((e) {
+        return int.parse(e.value) * (e.key + 1);
+      }).reduce((value, element) => value + element);
+    } on FormatException {
+      throw const FormatException('不正なJANコードです');
+    }
+
+    checkDigit %= checkDigitModulo;
+
+    return isbn + ((checkDigit == checkDigitXValue) ? 'X' : checkDigit.toString());
   }
 }
 
@@ -57,7 +51,6 @@ class BarcodeScanState extends State<BarcodeScanScreen> {
       _scanResult = result.rawContent.convertJanToIsbn();
     });
   }
-
 
   @override
   Widget build(BuildContext context) {

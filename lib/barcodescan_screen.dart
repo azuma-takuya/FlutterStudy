@@ -1,6 +1,6 @@
-import 'package:webview_flutter/webview_flutter.dart';
-import 'package:flutter/material.dart';
 import 'package:barcode_scan2/barcode_scan2.dart' as scanner;
+import 'package:flutter/material.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
 class BarcodeScanScreen extends StatefulWidget {
   const BarcodeScanScreen({super.key});
@@ -9,15 +9,55 @@ class BarcodeScanScreen extends StatefulWidget {
   BarcodeScanState createState() => BarcodeScanState();
 }
 
+extension JanToIsbnStringExtension on String {
+  String convertJanToIsbn() {
+
+    const janCodeLength = 13;
+    const startIsbnIndex = 3;
+    const endIsbnIndex = 12;
+    const checkDigitModulo = 11;
+    const checkDigitXValue = 10;
+
+    if (length == janCodeLength) {
+      var isbn = substring(startIsbnIndex, endIsbnIndex);
+      var checkDigit = 0;
+
+      final isbnList = isbn.split('');
+
+      try {
+        checkDigit = isbnList.asMap().entries.map((e) {
+          return int.parse(e.value) * (e.key + 1);
+        }).reduce((value, element) => value + element);
+      } on FormatException {
+        throw const FormatException('不正なJANコードです');
+      }
+
+      checkDigit %= checkDigitModulo;
+
+      if (checkDigit == checkDigitXValue) {
+        isbn += 'X';
+      } else {
+        isbn += checkDigit.toString();
+      }
+      return isbn;
+    } else {
+      throw const FormatException('不正なJANコードです');
+    }
+  }
+}
+
 class BarcodeScanState extends State<BarcodeScanScreen> {
-  String _scanResult = "";
+  String _scanResult = '';
+  final _webViewController = WebViewController();
 
   Future<void> _scanBarcode() async {
+    await _webViewController.clearCache();
     final result = await scanner.BarcodeScanner.scan();
     setState(() {
-      _scanResult = result.rawContent;
+      _scanResult = result.rawContent.convertJanToIsbn();
     });
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -30,23 +70,22 @@ class BarcodeScanState extends State<BarcodeScanScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           const Text(
-            'Scan Result:',
+            'バーコードスキャンしてください',
             style: TextStyle(fontSize: 24.0),
+            textAlign: TextAlign.center,
           ),
           Text(
             _scanResult,
             style: const TextStyle(
-                fontSize: 20.0, fontWeight: FontWeight.bold),
+                fontSize: 20, fontWeight: FontWeight.bold),
           ),
         ],
       )
           : WebViewWidget(
-        controller: WebViewController()
+        controller: _webViewController
           ..setJavaScriptMode(JavaScriptMode.unrestricted)
           ..setBackgroundColor(Colors.white)
           ..loadRequest(Uri.parse('https://www.amazon.co.jp/dp/$_scanResult')),
-        // initialUrl: 'https://www.amazon.co.jp/dp/$_scanResult',
-        // javascriptMode: JavascriptMode.unrestricted,
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _scanBarcode,

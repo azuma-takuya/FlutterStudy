@@ -30,7 +30,7 @@ class TodoListState extends State<TodolistScreen> {
 
   void editTask(String value, int index) {
     _editController.text = value;
-    showDialog(
+    showDialog<void>(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
@@ -123,7 +123,7 @@ class TodoListState extends State<TodolistScreen> {
                           deleteTask(index);
                         },
                       ),
-                    ))
+                    ),)
                   ],
                 );
               },

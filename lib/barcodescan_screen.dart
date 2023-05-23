@@ -9,19 +9,22 @@ class BarcodeScanScreen extends StatefulWidget {
   BarcodeScanState createState() => BarcodeScanState();
 }
 
+const janCodeLength = 13;
+const startIsbnIndex = 3;
+const endIsbnIndex = 12;
+const checkDigitModulo = 11;
+const checkDigitXValue = 10;
+
+//命名を帰る　アンスコつける
+//もしくは別ファイルにして呼び出して使いまわせるようにする
 extension JanToIsbnStringExtension on String {
   String convertJanToIsbn() {
-    const janCodeLength = 13;
-    const startIsbnIndex = 3;
-    const endIsbnIndex = 12;
-    const checkDigitModulo = 11;
-    const checkDigitXValue = 10;
 
     if (length != janCodeLength) {
       throw const FormatException('不正なJANコードです');
     }
 
-    var isbn = substring(startIsbnIndex, endIsbnIndex);
+    final isbn = substring(startIsbnIndex, endIsbnIndex);
     var checkDigit = 0;
 
     final isbnList = isbn.split('');
@@ -36,7 +39,9 @@ extension JanToIsbnStringExtension on String {
 
     checkDigit %= checkDigitModulo;
 
-    return isbn + ((checkDigit == checkDigitXValue) ? 'X' : checkDigit.toString());
+    //見ずらい　↓　修正する
+    return isbn +
+        ((checkDigit == checkDigitXValue) ? 'X' : checkDigit.toString());
   }
 }
 
@@ -64,13 +69,13 @@ class BarcodeScanState extends State<BarcodeScanScreen> {
         children: <Widget>[
           const Text(
             'バーコードスキャンしてください',
-            style: TextStyle(fontSize: 24.0),
+            style: TextStyle(fontSize: 24),
             textAlign: TextAlign.center,
           ),
           Text(
             _scanResult,
             style: const TextStyle(
-                fontSize: 20, fontWeight: FontWeight.bold),
+                fontSize: 20, fontWeight: FontWeight.bold,),
           ),
         ],
       )

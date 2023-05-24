@@ -1,6 +1,7 @@
 import 'package:barcode_scan2/barcode_scan2.dart' as scanner;
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+import 'jan_to_isbn_string_extension.dart';
 
 class BarcodeScanScreen extends StatefulWidget {
   const BarcodeScanScreen({super.key});
@@ -9,41 +10,8 @@ class BarcodeScanScreen extends StatefulWidget {
   BarcodeScanState createState() => BarcodeScanState();
 }
 
-const janCodeLength = 13;
-const startIsbnIndex = 3;
-const endIsbnIndex = 12;
-const checkDigitModulo = 11;
-const checkDigitXValue = 10;
-
 //命名を帰る　アンスコつける
 //もしくは別ファイルにして呼び出して使いまわせるようにする
-extension JanToIsbnStringExtension on String {
-  String convertJanToIsbn() {
-
-    if (length != janCodeLength) {
-      throw const FormatException('不正なJANコードです');
-    }
-
-    final isbn = substring(startIsbnIndex, endIsbnIndex);
-    var checkDigit = 0;
-
-    final isbnList = isbn.split('');
-
-    try {
-      checkDigit = isbnList.asMap().entries.map((e) {
-        return int.parse(e.value) * (e.key + 1);
-      }).reduce((value, element) => value + element);
-    } on FormatException {
-      throw const FormatException('不正なJANコードです');
-    }
-
-    checkDigit %= checkDigitModulo;
-
-    //見ずらい　↓　修正する
-    return isbn +
-        ((checkDigit == checkDigitXValue) ? 'X' : checkDigit.toString());
-  }
-}
 
 class BarcodeScanState extends State<BarcodeScanScreen> {
   String _scanResult = '';

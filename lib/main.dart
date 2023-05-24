@@ -1,6 +1,5 @@
 import 'package:countup/github_api_screen.dart';
 import 'package:flutter/material.dart';
-import 'barcodescan_screen.dart';
 
 void main() {
   runApp(const MyApp());

@@ -1,7 +1,4 @@
-import 'package:barcode_scan2/barcode_scan2.dart' as scanner;
 import 'package:flutter/material.dart';
-import 'package:webview_flutter/webview_flutter.dart';
-import 'jan_to_isbn_string_extension.dart';
 
 class GithubApiScreen extends StatefulWidget {
   const GithubApiScreen({super.key});
@@ -45,4 +42,3 @@ class GithubApiState extends State<GithubApiScreen> {
     );
   }
 }
-

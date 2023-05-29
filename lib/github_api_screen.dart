@@ -14,13 +14,14 @@ class GithubApiScreen extends StatefulWidget {
 class GithubApiState extends State<GithubApiScreen> {
   final TextEditingController controller1 = TextEditingController();
   final TextEditingController controller2 = TextEditingController();
-  final Dio dio = Dio();
+  // final Dio dio = Dio();
   late GithubApi githubApi;
 
-  List<Issue>? issues;
-  List<PullRequest>? pullRequests;
+  List<Issues>? issues;
+  List<PullRequests>? pullRequests;
 
   Future<void> fetchIssuesAndPullRequests() async {
+    print('githubApi: $githubApi');
     String username = controller1.text;
     String projectName = controller2.text;
 
@@ -53,10 +54,10 @@ class GithubApiState extends State<GithubApiScreen> {
             onPressed: fetchIssuesAndPullRequests,
             child: Text('検索'),
           ),
-          if (issues != null) Text('取得したIssue数: ${issues!.length}'),
+          if (issues != null) Text('取得したIssue: ${issues!.length}'),
           // ここでissuesを表示します。
           if (pullRequests != null)
-            Text('取得したPullRequest数: ${pullRequests!.length}'),
+            Text('取得したPullRequest: ${pullRequests!.length}'),
           // ここでpullRequestsを表示します。
         ],
       ),

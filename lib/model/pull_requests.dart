@@ -1,17 +1,21 @@
-import 'package:json_annotation/json_annotation.dart';
+import 'dart:convert';
+import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:flutter/foundation.dart';
 
+part 'pull_requests.freezed.dart';
 part 'pull_requests.g.dart';
 
+// モデル定義
+@freezed
+class PullRequests with _$PullRequests {
+  const PullRequests._(); // メソッドを追加するので、コンストラクタを追加
+  const factory PullRequests({required String name}) = _PullRequests;
 
-@JsonSerializable()
-class PullRequest {
-  final int id;
-  final String title;
-  final String body;
+  factory PullRequests.fromJson(Map<String, dynamic> json) => _$PullRequestsFromJson(json);
+  // クラスメソッドに、fromJsonStrメソッドを追加
+  // factory PullRequests.fromJsonStr(String jsonStr) => _$PullRequestsFromJson(json.decode(jsonStr));
 
-  PullRequest({required this.id, required this.title, required this.body});
-
-  factory PullRequest.fromJson(Map<String, dynamic> json) => _$PullRequestFromJson(json);
-
-  Map<String, dynamic> toJson() => _$PullRequestToJson(this);
+  String toJsonStr() {
+    return json.encode(toJson());
+  }
 }

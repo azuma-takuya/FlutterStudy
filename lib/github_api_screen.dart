@@ -11,32 +11,32 @@ class GithubApiScreen extends StatefulWidget {
 }
 
 class GithubApiState extends State<GithubApiScreen> {
-  final TextEditingController controller1 = TextEditingController();
-  final TextEditingController controller2 = TextEditingController();
+  final TextEditingController userNameController = TextEditingController();
+  final TextEditingController projectNameController = TextEditingController();
   late GithubApi githubApi;
 
   List<PullRequests>? _pulls;
 
-  // List<Issues>? issues;
+  List<Issues>? issues;
   List<PullRequests>? pullRequests;
 
   Future<void> fetchIssuesAndPullRequests() async {
-    String username = controller1.text;
-    String projectName = controller2.text;
+    final username = userNameController.text;
+    final projectName = projectNameController.text;
 
-    // issues = await githubApi.getIssues(username, projectName);
+    issues = await githubApi.getIssues(username, projectName);
     pullRequests = await githubApi.getPullRequests(username, projectName);
 
     setState(() {
-      // _pulls = pullRequests;
+      _pulls = pullRequests;
     }); // データが更新されたので、UIを再構築するためにsetStateを呼び出します。
   }
 
   @override
   void dispose() {
     // コントローラを破棄します
-    controller1.dispose();
-    controller2.dispose();
+    userNameController.dispose();
+    projectNameController.dispose();
 
     super.dispose();
   }
@@ -50,13 +50,13 @@ class GithubApiState extends State<GithubApiScreen> {
       body: Column(
         children: <Widget>[
           TextField(
-            controller: controller1,
+            controller: userNameController,
             decoration: const InputDecoration(
               hintText: 'ユーザー名入力',
             ),
           ),
           TextField(
-            controller: controller2,
+            controller: projectNameController,
             decoration: const InputDecoration(
               hintText: 'プロジェクト名入力',
             ),

@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'api/github_api.dart';
 import 'model/issues.dart';
@@ -17,15 +18,24 @@ class GithubApiState extends State<GithubApiScreen> {
 
   List<PullRequests>? _pulls;
 
-  List<Issues>? issues;
+  // List<Issues>? issues;
   List<PullRequests>? pullRequests;
+
+  @override
+  void initState() {
+    super.initState();
+    final dio = Dio(); // Create a Dio instance
+    githubApi = GithubApi(dio); // Create the GithubApi instance
+  }
 
   Future<void> fetchIssuesAndPullRequests() async {
     final username = userNameController.text;
     final projectName = projectNameController.text;
 
-    issues = await githubApi.getIssues(username, projectName);
+    // issues = await githubApi.getIssues(username, projectName);
     pullRequests = await githubApi.getPullRequests(username, projectName);
+    // print('Issues: $issues');  // Add this line
+    print('Pull Requests: $pullRequests'); // Add this line
 
     setState(() {
       _pulls = pullRequests;
@@ -63,21 +73,19 @@ class GithubApiState extends State<GithubApiScreen> {
           ),
           ElevatedButton(
             onPressed: fetchIssuesAndPullRequests,
-            child: Text('検索'),
+            child: const Text('検索'),
           ),
           const Text('プルリクエスト', style: TextStyle(fontSize: 40)),
-          // Flexible(
-          //   child: ListView.builder(
-          //     itemCount: _pulls?.length,
-          //     itemBuilder: (context, index) {
-          //       return _pulls?[index].title != null
-          //           ? ListTile(
-          //               title: Text(_pulls?[index].title ?? 'プルリクエストがありません'),
-          //             )
-          //           : const SizedBox.shrink();
-          //     },
-          //   ),
-          // ),
+          Flexible(
+            child: ListView.builder(
+              itemCount: _pulls?.length,
+              itemBuilder: (context, index) {
+                return ListTile(
+                  title: Text(_pulls?[index].title ?? 'プルリクエストがありません'),
+                );
+              },
+            ),
+          ),
         ],
       ),
     );

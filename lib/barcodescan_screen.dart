@@ -7,7 +7,7 @@ class BarcodeScanScreen extends StatefulWidget {
   const BarcodeScanScreen({super.key});
 
   @override
-  BarcodeScanState createState() => BarcodeScanState();
+  State<BarcodeScanScreen> createState() => BarcodeScanState();
 }
 
 //命名を帰る　アンスコつける

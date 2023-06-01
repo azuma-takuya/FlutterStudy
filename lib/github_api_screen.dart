@@ -12,14 +12,14 @@ class GithubApiScreen extends StatefulWidget {
 }
 
 class GithubApiState extends State<GithubApiScreen> {
-  final TextEditingController userNameController = TextEditingController();
-  final TextEditingController projectNameController = TextEditingController();
+  final TextEditingController userController = TextEditingController();
+  final TextEditingController repositoryController = TextEditingController();
   late GithubApi githubApi;
 
-  List<PullRequests>? _pulls;
-
-  // List<Issues>? issues;
-  List<PullRequests>? pullRequests;
+  List<PullRequests>? _pullsResult;
+  List<PullRequests>? getPulls;
+  List<Issues>? _issuesResult;
+  List<Issues>? getIssues;
 
   @override
   void initState() {
@@ -29,25 +29,28 @@ class GithubApiState extends State<GithubApiScreen> {
   }
 
   Future<void> fetchIssuesAndPullRequests() async {
-    final username = userNameController.text;
-    final projectName = projectNameController.text;
+    final user = userController.text;
+    final repo = repositoryController.text;
 
-    // issues = await githubApi.getIssues(username, projectName);
-    pullRequests = await githubApi.getPullRequests(username, projectName);
-    // print('Issues: $issues');  // Add this line
-    print('Pull Requests: $pullRequests'); // Add this line
+    //ここの宣言があると動かない
+    getIssues = await githubApi.getIssues('repo:${user}/${repo}+is:issue');
+
+    getPulls = await githubApi.getPullRequests(user, repo);
+    print('Issues: $getIssues'); // Add this line
+    print('PullRequest: $getPulls'); // Add this line
+
 
     setState(() {
-      _pulls = pullRequests;
+      _pullsResult = getPulls;
+      _issuesResult = getIssues;
     }); // データが更新されたので、UIを再構築するためにsetStateを呼び出します。
   }
 
   @override
   void dispose() {
     // コントローラを破棄します
-    userNameController.dispose();
-    projectNameController.dispose();
-
+    userController.dispose();
+    repositoryController.dispose();
     super.dispose();
   }
 
@@ -60,13 +63,13 @@ class GithubApiState extends State<GithubApiScreen> {
       body: Column(
         children: <Widget>[
           TextField(
-            controller: userNameController,
+            controller: userController,
             decoration: const InputDecoration(
               hintText: 'ユーザー名入力',
             ),
           ),
           TextField(
-            controller: projectNameController,
+            controller: repositoryController,
             decoration: const InputDecoration(
               hintText: 'プロジェクト名入力',
             ),
@@ -78,11 +81,36 @@ class GithubApiState extends State<GithubApiScreen> {
           const Text('プルリクエスト', style: TextStyle(fontSize: 40)),
           Flexible(
             child: ListView.builder(
-              itemCount: _pulls?.length,
+              itemCount: _pullsResult?.isEmpty ?? true ? 1 : _pullsResult!
+                  .length,
               itemBuilder: (context, index) {
-                return ListTile(
-                  title: Text(_pulls?[index].title ?? 'プルリクエストがありません'),
-                );
+                if (_pullsResult == null || _pullsResult!.isEmpty) {
+                  return const ListTile(
+                    title: Text('プルリクエストがありません'),
+                  );
+                } else {
+                  return ListTile(
+                    title: Text(_pullsResult![index].title),
+                  );
+                }
+              },
+            ),
+          ),
+          const Text('Issues', style: TextStyle(fontSize: 40)),
+          Flexible(
+            child: ListView.builder(
+              itemCount: _issuesResult?.isEmpty ?? true ? 1 : _issuesResult!
+                  .length,
+              itemBuilder: (context, index) {
+                if (_issuesResult == null || _issuesResult!.isEmpty) {
+                  return const ListTile(
+                    title: Text('Issuesがありません'),
+                  );
+                } else {
+                  return ListTile(
+                    title: Text(_issuesResult![index].title ?? 'Issuesがありません'),
+                  );
+                }
               },
             ),
           ),

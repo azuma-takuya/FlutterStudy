@@ -1,7 +1,7 @@
+import 'package:countup/model/issue_result.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'api/github_api.dart';
-import 'model/issues.dart';
 import 'model/pull_requests.dart';
 
 class GithubApiScreen extends StatefulWidget {
@@ -18,8 +18,8 @@ class GithubApiState extends State<GithubApiScreen> {
 
   List<PullRequests>? _pullsResult;
   List<PullRequests>? getPulls;
-  List<Issues>? _issuesResult;
-  List<Issues>? getIssues;
+
+  IssueResult? _issuesResult;
 
   @override
   void initState() {
@@ -33,16 +33,12 @@ class GithubApiState extends State<GithubApiScreen> {
     final repo = repositoryController.text;
 
     //ここの宣言があると動かない
-    getIssues = await githubApi.getIssues('repo:${user}/${repo}+is:issue');
-
+    final getIssuesResult = await githubApi.getIssues('repo:$user/$repo+is:issue');
     getPulls = await githubApi.getPullRequests(user, repo);
-    print('Issues: $getIssues'); // Add this line
-    print('PullRequest: $getPulls'); // Add this line
-
 
     setState(() {
       _pullsResult = getPulls;
-      _issuesResult = getIssues;
+      _issuesResult = getIssuesResult;
     }); // データが更新されたので、UIを再構築するためにsetStateを呼び出します。
   }
 
@@ -99,16 +95,16 @@ class GithubApiState extends State<GithubApiScreen> {
           const Text('Issues', style: TextStyle(fontSize: 40)),
           Flexible(
             child: ListView.builder(
-              itemCount: _issuesResult?.isEmpty ?? true ? 1 : _issuesResult!
-                  .length,
+              itemCount: _issuesResult?.items?.length ?? 0,
               itemBuilder: (context, index) {
-                if (_issuesResult == null || _issuesResult!.isEmpty) {
+                if (_issuesResult == null) {
                   return const ListTile(
                     title: Text('Issuesがありません'),
                   );
                 } else {
+                  final title = _issuesResult?.items?[index].title ;
                   return ListTile(
-                    title: Text(_issuesResult![index].title ?? 'Issuesがありません'),
+                    title: Text(title ?? 'Issuesがありません'),
                   );
                 }
               },

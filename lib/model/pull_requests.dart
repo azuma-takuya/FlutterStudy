@@ -10,5 +10,6 @@ class PullRequests with _$PullRequests {
   // const PullRequests._(); // メソッドを追加するので、コンストラクタを追加
   const factory PullRequests({required String title}) = _PullRequests;
 
-  factory PullRequests.fromJson(Map<String, dynamic> json) => _$PullRequestsFromJson(json);
+  factory PullRequests.fromJson(Map<String, dynamic> json) =>
+      _$PullRequestsFromJson(json);
 }

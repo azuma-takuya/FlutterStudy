@@ -8,7 +8,7 @@ class GithubApiScreen extends StatefulWidget {
   const GithubApiScreen({super.key});
 
   @override
-  GithubApiState createState() => GithubApiState();
+  State<GithubApiScreen> createState() => GithubApiState();
 }
 
 class GithubApiState extends State<GithubApiScreen> {
@@ -16,10 +16,10 @@ class GithubApiState extends State<GithubApiScreen> {
   final TextEditingController repositoryController = TextEditingController();
   late GithubApi githubApi;
 
-  List<PullRequests>? _pullsResult;
-  List<PullRequests>? getPulls;
+  List<PullRequests>? _pullResult;
+  List<PullRequests>? getPull;
 
-  IssueResult? _issuesResult;
+  IssueResult? _issueResult;
 
   @override
   void initState() {
@@ -32,86 +32,98 @@ class GithubApiState extends State<GithubApiScreen> {
     final user = userController.text;
     final repo = repositoryController.text;
 
-    //ここの宣言があると動かない
-    final getIssuesResult = await githubApi.getIssues('repo:$user/$repo+is:issue');
-    getPulls = await githubApi.getPullRequests(user, repo);
-
-    setState(() {
-      _pullsResult = getPulls;
-      _issuesResult = getIssuesResult;
-    }); // データが更新されたので、UIを再構築するためにsetStateを呼び出します。
-  }
-
-  @override
-  void dispose() {
-    // コントローラを破棄します
-    userController.dispose();
-    repositoryController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('GitHubリポジトリ情報取得'),
-      ),
-      body: Column(
-        children: <Widget>[
-          TextField(
-            controller: userController,
-            decoration: const InputDecoration(
-              hintText: 'ユーザー名入力',
+    await Future.wait([
+      githubApi.getIssues('repo:$user/$repo is:issue',),
+      githubApi.getPullRequests(user, repo),
+    ]).then(
+            (apiResult) {
+          setState(() {
+            _issueResult = apiResult[0] as IssueResult?;
+            _pullResult = apiResult[1] as List<PullRequests>?;
+          });
+        },
+        onError: (dynamic e) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('リポジトリ情報が取得できません: $e'),
+              duration: const Duration(seconds: 3),
             ),
-          ),
-          TextField(
-            controller: repositoryController,
-            decoration: const InputDecoration(
-              hintText: 'プロジェクト名入力',
-            ),
-          ),
-          ElevatedButton(
-            onPressed: fetchIssuesAndPullRequests,
-            child: const Text('検索'),
-          ),
-          const Text('プルリクエスト', style: TextStyle(fontSize: 40)),
-          Flexible(
-            child: ListView.builder(
-              itemCount: _pullsResult?.isEmpty ?? true ? 1 : _pullsResult!
-                  .length,
-              itemBuilder: (context, index) {
-                if (_pullsResult == null || _pullsResult!.isEmpty) {
-                  return const ListTile(
-                    title: Text('プルリクエストがありません'),
-                  );
-                } else {
-                  return ListTile(
-                    title: Text(_pullsResult![index].title),
-                  );
-                }
-              },
-            ),
-          ),
-          const Text('Issues', style: TextStyle(fontSize: 40)),
-          Flexible(
-            child: ListView.builder(
-              itemCount: _issuesResult?.items?.length ?? 0,
-              itemBuilder: (context, index) {
-                if (_issuesResult == null) {
-                  return const ListTile(
-                    title: Text('Issuesがありません'),
-                  );
-                } else {
-                  final title = _issuesResult?.items?[index].title ;
-                  return ListTile(
-                    title: Text(title ?? 'Issuesがありません'),
-                  );
-                }
-              },
-            ),
-          ),
-        ],
-      ),
+          );
+        },
     );
   }
-}
+
+        @override
+        void dispose()
+    {
+      // コントローラを破棄します
+      userController.dispose();
+      repositoryController.dispose();
+      super.dispose();
+    }
+
+    @override
+    Widget build(BuildContext context) {
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text('GitHubリポジトリ情報取得'),
+        ),
+        body: Column(
+          children: <Widget>[
+            TextField(
+              controller: userController,
+              decoration: const InputDecoration(
+                hintText: 'ユーザー名入力',
+              ),
+            ),
+            TextField(
+              controller: repositoryController,
+              decoration: const InputDecoration(
+                hintText: 'プロジェクト名入力',
+              ),
+            ),
+            ElevatedButton(
+              onPressed: fetchIssuesAndPullRequests,
+              child: const Text('検索'),
+            ),
+            const Text('PullRequest', style: TextStyle(fontSize: 40)),
+            Flexible(
+              child: ListView.builder(
+                itemCount: _pullResult?.length ?? 0,
+                itemBuilder: (context, index) {
+                  final pullRequest = _pullResult?[index];
+                  if (pullRequest == null || _pullResult!.isEmpty) {
+                    return const ListTile(
+                      title: Text('PullRequestがありません'),
+                    );
+                  } else {
+                    return ListTile(
+                      title: Text(pullRequest.title ?? 'No title'),
+                    );
+                  }
+                },
+              ),
+            ),
+            const Text('Issues', style: TextStyle(fontSize: 40)),
+            Flexible(
+              child: ListView.builder(
+                itemCount: _issueResult?.items?.length ?? 0,
+                itemBuilder: (context, index) {
+                  final issueTitle = _issueResult?.items?[index].title;
+                  if (_issueResult == null || _pullResult!.isEmpty) {
+                    return const ListTile(
+                      title: Text('Issueがありません'),
+                    );
+                  } else {
+                    return ListTile(
+                      title: Text(issueTitle ?? 'Issuesがありません'),
+                    );
+                  }
+                },
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+  }

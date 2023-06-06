@@ -34,8 +34,7 @@ class GithubApiState extends State<GithubApiScreen> {
 
     await Future.wait([
       githubApi.getIssues('repo:$user/$repo is:issue',),
-      githubApi.getPullRequests(user, repo),
-    ]).then(
+      githubApi.getPullRequests(user, repo),]).then(
             (apiResult) {
           setState(() {
             _issueResult = apiResult[0] as IssueResult?;

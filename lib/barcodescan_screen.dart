@@ -43,7 +43,7 @@ class BarcodeScanState extends State<BarcodeScanScreen> {
           Text(
             _scanResult,
             style: const TextStyle(
-                fontSize: 20, fontWeight: FontWeight.bold,),
+                fontSize: 24, fontWeight: FontWeight.bold,),
           ),
         ],
       )

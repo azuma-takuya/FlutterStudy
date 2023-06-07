@@ -1,4 +1,5 @@
 import 'package:countup/github_api_screen.dart';
+import 'package:countup/news_api_screen.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -13,7 +14,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'StopWatch',
       theme: ThemeData(primarySwatch: Colors.blue),
-      home: const GithubApiScreen(),
+      home: const NewsApiScreen(),
     );
   }
 }

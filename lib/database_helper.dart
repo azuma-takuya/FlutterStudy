@@ -20,7 +20,9 @@ class DatabaseHelper {
   static Database? _database;
 
   Future<Database?> get database async {
-    if (_database != null) return _database;
+    if (_database != null) {
+      return _database;
+    }
     _database = await _initDatabase();
     return _database;
   }
@@ -31,7 +33,7 @@ class DatabaseHelper {
     final path = join(documentsDirectory.path, _databaseName);
     return await openDatabase(path,
         version: _databaseVersion,
-        onCreate: _onCreate);
+        onCreate: _onCreate,);
   }
 
   Future _onCreate(Database db, int version) async {
@@ -43,4 +45,16 @@ class DatabaseHelper {
           )
           ''');
   }
+
+  // データの挿入を行うメソッド
+  Future<int> insert(Map<String, dynamic> row) async {
+    final db = await instance.database;
+    return db!.insert(table, row);
+  }
+
+  Future<List<Map<String, dynamic>>> queryAllRows() async {
+    final db = await instance.database;
+    return await db!.query(table);
+  }
+
 }

@@ -1,33 +1,68 @@
 import 'package:flutter/material.dart';
-
 import 'database_helper.dart';
 
 
-class NewsApiscreen extends StatefulWidget {
-  const NewsApiscreen({super.key});
+class NewsApiScreen extends StatefulWidget {
+  const NewsApiScreen({super.key});
 
   @override
-  State<NewsApiscreen> createState() => NewsApiState();
+  State<NewsApiScreen> createState() => NewsApiState();
 }
 
-class NewsApiState extends State<NewsApiscreen> {
+class NewsApiState extends State<NewsApiScreen> {
+  final _nameController = TextEditingController();
+  final _ageController = TextEditingController();
 
   void _insertData() async {
-    Map<String, dynamic> row = {
-      DatabaseHelper.columnName : 'Alice',
-      DatabaseHelper.columnAge  : 20
+    final row = <String, dynamic>{
+      DatabaseHelper.columnName : _nameController.text,
+      DatabaseHelper.columnAge  : int.tryParse(_ageController.text) ?? 0
     };
 
     final id = await DatabaseHelper.instance.insert(row);
     print('inserted row id: $id');
   }
 
+  void _showAllData() async {
+    final allRows = await DatabaseHelper.instance.queryAllRows();
+    print('All rows:');
+    allRows.forEach((row) => print(row));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
+      appBar: AppBar(
         title: const Text('newsAPI取得'),
-    ),
-    body: Column();
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: <Widget>[
+            TextField(
+              controller: _nameController,
+              decoration: const InputDecoration(
+                hintText: 'Name',
+              ),
+            ),
+            TextField(
+              controller: _ageController,
+              decoration: const InputDecoration(
+                hintText: 'Age',
+              ),
+              keyboardType: TextInputType.number,
+            ),
+            ElevatedButton(
+              onPressed: _insertData,
+              child: const Text('Save Data'),
+            ),
+            ElevatedButton(
+              onPressed: _showAllData,
+              child: const Text('Show All Data'),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

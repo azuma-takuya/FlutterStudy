@@ -58,7 +58,7 @@ class NewsApiState extends State<NewsApiScreen> {
             ),
             ElevatedButton(
               onPressed: _showAllData,
-              child: const Text('Show All Data'),
+              child: const Text('テーブルデータ取得'),
             ),
           ],
         ),

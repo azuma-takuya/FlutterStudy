@@ -12,20 +12,14 @@ class NewsApiscreen extends StatefulWidget {
 
 class NewsApiState extends State<NewsApiscreen> {
 
-  // 取得したデータをデータベースに保存する
-  DatabaseHelper helper = DatabaseHelper();
-  for (var pullRequest in _pullResult) {
-  await helper.insert({
-  'type': 'pull_request',
-  'title': pullRequest.title,
-  });
-  }
+  void _insertData() async {
+    Map<String, dynamic> row = {
+      DatabaseHelper.columnName : 'Alice',
+      DatabaseHelper.columnAge  : 20
+    };
 
-  for (var issue in _issueResult) {
-  await helper.insert({
-  'type': 'issue',
-  'title': issue.title,
-  });
+    final id = await DatabaseHelper.instance.insert(row);
+    print('inserted row id: $id');
   }
 
   @override

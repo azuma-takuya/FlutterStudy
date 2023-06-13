@@ -28,28 +28,30 @@ class GithubApiState extends State<GithubApiScreen> {
     githubApi = GithubApi(dio); // Create the GithubApi instance
   }
 
-  Future<void> fetchIssuesAndPullRequests() async {
+
+  Future<void> _fetchIssuesAndPullRequests() async {
     final user = userController.text;
     final repo = repositoryController.text;
 
-    try {
-      final issueFuture = githubApi.getIssues('repo:$user/$repo is:issue',);
-      final pullFuture = githubApi.getPullRequests(user, repo);
+    final issueFuture = githubApi.getIssues(
+      'repo:$user/$repo is:issue',
+    );
+    final pullFuture = githubApi.getPullRequests(user, repo);
 
-      final (getIssueApi, getPullApi) = await (issueFuture, pullFuture).wait;
+    final (getIssueApi, getPullApi) = await (issueFuture, pullFuture).wait;
 
-      setState(() {
-        _issueResult = getIssueApi;
-        _pullResult = getPullApi;
-      });
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('リポジトリ情報が取得できません: $e'),
-          duration: const Duration(seconds: 3),
-        ),
-      );
-    }
+    setState(() {
+      _issueResult = getIssueApi;
+      _pullResult = getPullApi;
+    });
+  }
+
+  @override
+  void dispose() {
+    // コントローラを破棄します
+    userController.dispose();
+    repositoryController.dispose();
+    super.dispose();
   }
 
   @override
@@ -73,7 +75,18 @@ class GithubApiState extends State<GithubApiScreen> {
             ),
           ),
           ElevatedButton(
-            onPressed: fetchIssuesAndPullRequests,
+            onPressed: () async {
+              try {
+                await _fetchIssuesAndPullRequests();
+              } catch (e) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Error: ユーザー名、またはプロジェクト名が存在しません'),
+                    backgroundColor: Colors.red,
+                  ),
+                );
+              }
+            },
             child: const Text('検索'),
           ),
           const Text('PullRequest', style: TextStyle(fontSize: 40)),
@@ -88,7 +101,7 @@ class GithubApiState extends State<GithubApiScreen> {
                   );
                 } else {
                   return ListTile(
-                    title: Text(pullRequest.title ?? 'No title'),
+                    title: Text(pullRequest.title),
                   );
                 }
               },
@@ -116,13 +129,4 @@ class GithubApiState extends State<GithubApiScreen> {
       ),
     );
   }
-
-  @override
-  void dispose() {
-    // コントローラを破棄します
-    userController.dispose();
-    repositoryController.dispose();
-    super.dispose();
-  }
-
 }

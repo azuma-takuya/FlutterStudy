@@ -1,5 +1,11 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'database_helper.dart';
+import 'package:provider/provider.dart';
+import 'FavoritesManager.dart';
+import 'api/news_api.dart';
+import 'model/news.dart';
+import 'model/news_result.dart';
+import 'news_favorite_screen.dart';
 
 
 class NewsApiScreen extends StatefulWidget {
@@ -10,58 +16,75 @@ class NewsApiScreen extends StatefulWidget {
 }
 
 class NewsApiState extends State<NewsApiScreen> {
-  final _nameController = TextEditingController();
-  final _ageController = TextEditingController();
+  late NewsApi newsApi;
+  NewsResult? newsList;
+  List<News>? favorites = [];
 
-  void _insertData() async {
-    final row = <String, dynamic>{
-      DatabaseHelper.columnName : _nameController.text,
-      DatabaseHelper.columnAge  : int.tryParse(_ageController.text) ?? 0
-    };
-
-    final id = await DatabaseHelper.instance.insert(row);
-    print('inserted row id: $id');
+  @override
+  void initState() {
+    super.initState();
+    final dio = Dio();
+    newsApi = NewsApi(dio);
+    fetchNews();
+    context.read<FavoritesManager>().readFavorites();
   }
 
-  void _showAllData() async {
-    final allRows = await DatabaseHelper.instance.queryAllRows();
-    print('All rows:');
-    allRows.forEach((row) => print(row));
+  // @override
+  // void didChangeDependencies() {
+  //   super.didChangeDependencies();
+  //   context.read<FavoritesManager>().readFavorites();
+  // }
+
+  Future<void> fetchNews() async {
+    try {
+      final response =
+      await newsApi.getNews('1a1f54dd5dfd4f4492bfc3d8bd0e5a58');
+      setState(() {
+        newsList = response;
+      });
+    } catch (e) {
+      print('Failed to fetch news: $e');
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    final favoritesManager = Provider.of<FavoritesManager>(context);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('newsAPI取得'),
+        title: const Text('News API Fetch'),
+        actions: <Widget>[
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: fetchNews,
+          ),
+          IconButton(
+            icon: const Icon(Icons.list),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) =>
+                const NewsFavoritesScreen(),),
+              );
+            },
+          ),
+        ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: <Widget>[
-            TextField(
-              controller: _nameController,
-              decoration: const InputDecoration(
-                hintText: 'Name',
-              ),
+      body: ListView.builder(
+        itemCount: newsList?.articles?.length,
+        itemBuilder: (context, index) {
+          final news = newsList?.articles![index];
+          return ListTile(
+            title: Text(news?.title ?? 'No title'),
+            subtitle: Text(news?.url ?? 'No URL'),
+            trailing: IconButton(
+              icon: favoritesManager.isFavorite(news)
+                  ? const Icon(Icons.favorite, color: Colors.red)
+                  : const Icon(Icons.favorite_border),
+              onPressed: () => favoritesManager.toggleFavorite(news!),
             ),
-            TextField(
-              controller: _ageController,
-              decoration: const InputDecoration(
-                hintText: 'Age',
-              ),
-              keyboardType: TextInputType.number,
-            ),
-            ElevatedButton(
-              onPressed: _insertData,
-              child: const Text('Save Data'),
-            ),
-            ElevatedButton(
-              onPressed: _showAllData,
-              child: const Text('Show All Data'),
-            ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }

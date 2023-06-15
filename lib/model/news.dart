@@ -18,7 +18,6 @@ final String? url;
 
 Map<String, dynamic> toJson() => _$NewsToJson(this);
 
-
   @override
   String toString() {
     return 'News{title: $title, url: $url}';  // News モデルが持つ他のプロパティも表示させることができます

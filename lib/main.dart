@@ -1,6 +1,8 @@
-import 'package:countup/github_api_screen.dart';
-import 'package:countup/news_api_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import 'FavoritesManager.dart';
+import 'news_api_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -11,10 +13,19 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'StopWatch',
-      theme: ThemeData(primarySwatch: Colors.blue),
-      home: const NewsApiScreen(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (_) => FavoritesManager(),
+        ),
+      ],
+      child: MaterialApp(
+        title: 'News App',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+        ),
+        home: const NewsApiScreen(),
+      ),
     );
   }
 }

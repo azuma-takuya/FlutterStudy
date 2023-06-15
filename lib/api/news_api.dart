@@ -1,21 +1,14 @@
-// import 'package:dio/dio.dart';
-// import 'package:retrofit/http.dart';
-//
-// part 'news_api.g.dart';
-//
-// @RestApi(baseUrl: 'https://api.github.com')
-// abstract class NewsApi {
-//   factory NewsApi(Dio dio, {String baseUrl}) = _NewsApi;
-//
-//   // // @queryで値を取得
-//   // @GET('/search/issues')
-//   // Future<IssueResult> getIssues(
-//   //     @Query('q') String query,
-//   //     );
-//   //
-//   // @GET('/repos/{user}/{repo}/pulls')
-//   // Future<List<PullRequests>> getPullRequests(
-//   //     @Path('user') String owner,
-//   //     @Path('repo') String repo,
-//   //     );
-// }
+import 'package:dio/dio.dart' hide Headers;
+import 'package:retrofit/http.dart';
+
+import '../model/news_result.dart';
+
+part 'news_api.g.dart';
+
+@RestApi(baseUrl: 'https://newsapi.org/v2/')
+abstract class NewsApi {
+  factory NewsApi(Dio dio, {String baseUrl}) = _NewsApi;
+
+  @GET('top-headlines?country=jp&apiKey={key}')
+  Future<NewsResult> getNews(@Path('key') String apiKey);
+}

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'FavoritesManager.dart';
+import 'favorites_manager.dart';
 import 'news_api_screen.dart';
 
 void main() {

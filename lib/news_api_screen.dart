@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'FavoritesManager.dart';
+import 'favorites_manager.dart';
 import 'api/news_api.dart';
 import 'model/news.dart';
 import 'model/news_result.dart';
@@ -29,12 +29,6 @@ class NewsApiState extends State<NewsApiScreen> {
     context.read<FavoritesManager>().readFavorites();
   }
 
-  // @override
-  // void didChangeDependencies() {
-  //   super.didChangeDependencies();
-  //   context.read<FavoritesManager>().readFavorites();
-  // }
-
   Future<void> fetchNews() async {
     try {
       final response =
@@ -61,9 +55,7 @@ class NewsApiState extends State<NewsApiScreen> {
           IconButton(
             icon: const Icon(Icons.list),
             onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) =>
+              Navigator.push(context, MaterialPageRoute(builder: (context) =>
                 const NewsFavoritesScreen(),),
               );
             },

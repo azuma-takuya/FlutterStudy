@@ -5,7 +5,6 @@ import 'package:path_provider/path_provider.dart';
 import 'model/news.dart';
 
 class FavoritesManager with ChangeNotifier {
-
   List<News>? favorites = [];
 
   Future<File> get _localFile async {
@@ -18,8 +17,8 @@ class FavoritesManager with ChangeNotifier {
       final file = await _localFile;
       final contents = await file.readAsString();
       final jsonData = json.decode(contents) as List;
-      favorites = jsonData.map((item) => News.fromJson(item)).toList();
-      print('Read favorites from file: $favorites');
+      favorites = jsonData.map((item) =>
+          News.fromJson(item as Map<String, dynamic>),).toList();
     } catch (e) {
       print('Unable to read favorites: $e');
     }
@@ -30,7 +29,6 @@ class FavoritesManager with ChangeNotifier {
     final file = await _localFile;
     await file.writeAsString(json.encode(favorites));
     notifyListeners();
-    print('Wrote favorites to file: $favorites');
   }
 
   void addFavorite(News news) {

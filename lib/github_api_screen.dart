@@ -28,7 +28,6 @@ class GithubApiState extends State<GithubApiScreen> {
     githubApi = GithubApi(dio); // Create the GithubApi instance
   }
 
-
   Future<void> _fetchIssuesAndPullRequests() async {
     final user = userController.text;
     final repo = repositoryController.text;
@@ -76,16 +75,14 @@ class GithubApiState extends State<GithubApiScreen> {
           ),
           ElevatedButton(
             onPressed: () async {
-              try {
-                await _fetchIssuesAndPullRequests();
-              } catch (e) {
+              await _fetchIssuesAndPullRequests().catchError((e) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
+                  const SnackBar(
                     content: Text('Error: ユーザー名、またはプロジェクト名が存在しません'),
                     backgroundColor: Colors.red,
                   ),
                 );
-              }
+              });
             },
             child: const Text('検索'),
           ),
@@ -95,15 +92,13 @@ class GithubApiState extends State<GithubApiScreen> {
               itemCount: _pullResult?.length ?? 0,
               itemBuilder: (context, index) {
                 final pullRequest = _pullResult?[index];
-                if (pullRequest == null || _pullResult!.isEmpty) {
-                  return const ListTile(
-                    title: Text('PullRequestがありません'),
-                  );
-                } else {
-                  return ListTile(
-                    title: Text(pullRequest.title),
-                  );
-                }
+                final isEmptyPullRequests =
+                    pullRequest == null || _pullResult!.isEmpty;
+                return ListTile(
+                  title: isEmptyPullRequests
+                      ? const Text('PullRequestがないです')
+                      : Text(pullRequest.title),
+                );
               },
             ),
           ),
@@ -113,15 +108,13 @@ class GithubApiState extends State<GithubApiScreen> {
               itemCount: _issueResult?.items?.length ?? 0,
               itemBuilder: (context, index) {
                 final issueTitle = _issueResult?.items?[index].title;
-                if (_issueResult == null || _pullResult!.isEmpty) {
-                  return const ListTile(
-                    title: Text('Issueがありません'),
-                  );
-                } else {
-                  return ListTile(
-                    title: Text(issueTitle ?? 'Issuesがありません'),
-                  );
-                }
+                final isEmptyIssues = _issueResult == null ||
+                    (_issueResult?.items?.isEmpty ?? true);
+                return ListTile(
+                  title: isEmptyIssues
+                      ? const Text('Issueがないです')
+                      : Text(issueTitle ?? 'Issuesがないです'),
+                );
               },
             ),
           ),

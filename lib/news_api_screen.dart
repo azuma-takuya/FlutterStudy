@@ -31,8 +31,9 @@ class NewsApiState extends State<NewsApiScreen> {
 
   Future<void> fetchNews() async {
     try {
+      const newsApiKey = String.fromEnvironment('NEWS_API_KEY');
       final response =
-      await newsApi.getNews('1a1f54dd5dfd4f4492bfc3d8bd0e5a58');
+      await newsApi.getNews(newsApiKey);
       setState(() {
         newsList = response;
       });

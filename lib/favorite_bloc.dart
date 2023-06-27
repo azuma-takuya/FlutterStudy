@@ -5,12 +5,13 @@ import 'package:path_provider/path_provider.dart';
 import 'model/news.dart';
 
 class FavoriteBloc {
-  final List<News> _favorites = [];
-  final _favoriteController = StreamController<List<News>>.broadcast();
 
   FavoriteBloc() {
     readFavorites();
   }
+
+  final List<News> _favorites = [];
+  final _favoriteController = StreamController<List<News>>.broadcast();
 
   Stream<List<News>> get favoritesStream => _favoriteController.stream;
 
@@ -18,8 +19,8 @@ class FavoriteBloc {
     final file = await _localFile;
     if (await file.exists()) {
       final contents = await file.readAsString();
-      final jsonData = json.decode(contents) as List;
-      _favorites.addAll(jsonData.map((item) => News.fromJson(item as Map<String, dynamic>)).toList());
+      final jsonData = json.decode(contents) as List<Map<String, dynamic>>;
+      _favorites.addAll(jsonData.map((item) => News.fromJson(item)).toList());
       _favoriteController.sink.add(_favorites);
     } else {
       _favoriteController.sink.add(_favorites);
@@ -49,4 +50,5 @@ class FavoriteBloc {
   void dispose() {
     _favoriteController.close();
   }
+
 }

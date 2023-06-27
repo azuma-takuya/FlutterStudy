@@ -19,14 +19,11 @@ class NewsFavoritesScreen extends StatelessWidget {
           if (snapshot.hasError) {
             return Text('Error: ${snapshot.error}');
           }
-
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           }
-
-          // Handle the case when there are no favorites.
           if (snapshot.hasData && snapshot.data!.isEmpty) {
-            return const Center(child: Text('No favorites yet'));
+            return const Center(child: Text('お気に入りは登録されていません'));
           }
 
           return ListView.builder(
@@ -39,7 +36,7 @@ class NewsFavoritesScreen extends StatelessWidget {
                 trailing: IconButton(
                   icon: const Icon(Icons.delete),
                   onPressed: () {
-                    favoriteBloc.removeFavorite(news);
+                    favoriteBloc.toggleFavorite(news);
                   },
                 ),
               );

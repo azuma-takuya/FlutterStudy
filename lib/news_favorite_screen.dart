@@ -14,6 +14,7 @@ class NewsFavoritesScreen extends StatelessWidget {
         title: const Text('Favorites'),
       ),
       body: StreamBuilder<List<News>>(
+        //nullチェックを行う
         stream: favoriteBloc.favoritesStream,
         builder: (context, snapshot) {
           if (snapshot.hasError) {
@@ -25,7 +26,6 @@ class NewsFavoritesScreen extends StatelessWidget {
           if (snapshot.hasData && snapshot.data!.isEmpty) {
             return const Center(child: Text('お気に入りは登録されていません'));
           }
-
           return ListView.builder(
             itemCount: snapshot.data!.length,
             itemBuilder: (context, index) {

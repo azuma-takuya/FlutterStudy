@@ -1,11 +1,11 @@
+import 'package:countup/favorite_manager.dart';
+import 'package:countup/news_favorite_screen.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'favorites_manager.dart';
 import 'api/news_api.dart';
 import 'model/news.dart';
 import 'model/news_result.dart';
-import 'news_favorite_screen.dart';
 
 
 class NewsApiScreen extends StatefulWidget {
@@ -26,7 +26,7 @@ class NewsApiState extends State<NewsApiScreen> {
     final dio = Dio();
     newsApi = NewsApi(dio);
     fetchNews();
-    context.read<FavoritesManager>().readFavorites();
+    context.read<FavoriteManager>().readFavorites();
   }
 
   Future<void> fetchNews() async {
@@ -44,7 +44,7 @@ class NewsApiState extends State<NewsApiScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final favoritesManager = Provider.of<FavoritesManager>(context);
+    final favoriteManager = Provider.of<FavoriteManager>(context);
     return Scaffold(
       appBar: AppBar(
         title: const Text('News API Fetch'),
@@ -57,7 +57,7 @@ class NewsApiState extends State<NewsApiScreen> {
             icon: const Icon(Icons.list),
             onPressed: () {
               Navigator.push(context, MaterialPageRoute(builder: (context) =>
-                const NewsFavoritesScreen(),),
+              const NewsFavoriteScreen(),),
               );
             },
           ),
@@ -71,10 +71,10 @@ class NewsApiState extends State<NewsApiScreen> {
             title: Text(news?.title ?? 'No title'),
             subtitle: Text(news?.url ?? 'No URL'),
             trailing: IconButton(
-              icon: favoritesManager.isFavorite(news)
+              icon: favoriteManager.isFavorite(news)
                   ? const Icon(Icons.favorite, color: Colors.red)
                   : const Icon(Icons.favorite_border),
-              onPressed: () => favoritesManager.toggleFavorite(news!),
+              onPressed: () => favoriteManager.toggleFavorite(news!),
             ),
           );
         },

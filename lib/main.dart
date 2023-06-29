@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'favorite_manager.dart';
 import 'news_api_screen.dart';
 
-void main() {
+void main() async {
   runApp(const MyApp());
 }
 
@@ -12,19 +10,12 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(
-          create: (_) => FavoriteManager(),
-        ),
-      ],
-      child: MaterialApp(
-        title: 'News App',
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-        ),
-        home: const NewsApiScreen(),
+    return MaterialApp(
+      title: 'ニュースAPI表示',
+      theme: ThemeData(
+        primaryColor: Colors.blue,
       ),
+      home: const NewsApiScreen(),
     );
   }
 }

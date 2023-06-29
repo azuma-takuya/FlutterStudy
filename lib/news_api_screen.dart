@@ -2,7 +2,6 @@ import 'package:countup/favorite_manager.dart';
 import 'package:countup/news_favorite_screen.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'api/news_api.dart';
 import 'model/news.dart';
 import 'model/news_result.dart';
@@ -17,6 +16,7 @@ class NewsApiScreen extends StatefulWidget {
 
 class NewsApiState extends State<NewsApiScreen> {
   late NewsApi newsApi;
+  late FavoriteManager favoriteManager;
   NewsResult? newsList;
   List<News>? favorites = [];
 
@@ -25,10 +25,13 @@ class NewsApiState extends State<NewsApiScreen> {
     super.initState();
     final dio = Dio();
     newsApi = NewsApi(dio);
+    favoriteManager = FavoriteManager();
+    // context.read<FavoriteManager>().readFavorites();
     fetchNews();
-    context.read<FavoriteManager>().readFavorites();
+    loadFavorites();
   }
 
+  //取得したAPIの情報をnewsListに代入し、状態を更新（再描画）
   Future<void> fetchNews() async {
     try {
       const newsApiKey = String.fromEnvironment('NEWS_API_KEY');
@@ -42,20 +45,28 @@ class NewsApiState extends State<NewsApiScreen> {
     }
   }
 
+  Future<void> loadFavorites() async {
+    await favoriteManager.readFavorites();
+    setState(() {});
+  }
+
+
   @override
   Widget build(BuildContext context) {
-    final favoriteManager = Provider.of<FavoriteManager>(context);
+    // final favoriteManager = Provider.of<FavoriteManager>(context);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('News API Fetch'),
+        title: const Text('News速報'),
         actions: <Widget>[
           IconButton(
+            //リフレッシュアイコンを押すたびにニュースを再取得
             icon: const Icon(Icons.refresh),
             onPressed: fetchNews,
           ),
           IconButton(
             icon: const Icon(Icons.list),
             onPressed: () {
+
               Navigator.push(context, MaterialPageRoute(builder: (context) =>
               const NewsFavoriteScreen(),),
               );

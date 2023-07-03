@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'favorite_manager.dart';
 
 class NewsFavoriteScreen extends StatefulWidget {
@@ -30,6 +31,14 @@ class NewsFavoriteScreenState extends State<NewsFavoriteScreen> {
                 setState(() {});  // UIを更新する
               },
             ),
+            onTap: () async {
+              final url = news.url;
+              if (url != null && await canLaunch(url)) {
+                await launch(url);
+              } else {
+                // couldn't open the url, do something else
+              }
+            },
           );
         },
       ),

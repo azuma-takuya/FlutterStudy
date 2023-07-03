@@ -6,7 +6,6 @@ import 'api/news_api.dart';
 import 'model/news.dart';
 import 'model/news_result.dart';
 
-
 class NewsApiScreen extends StatefulWidget {
   const NewsApiScreen({super.key});
 
@@ -16,7 +15,7 @@ class NewsApiScreen extends StatefulWidget {
 
 class NewsApiState extends State<NewsApiScreen> {
   late NewsApi newsApi;
-  late FavoriteManager favoriteManager;
+  late final FavoriteManager favoriteManager;
   NewsResult? newsList;
   List<News>? favorites = [];
 
@@ -26,7 +25,6 @@ class NewsApiState extends State<NewsApiScreen> {
     final dio = Dio();
     newsApi = NewsApi(dio);
     favoriteManager = FavoriteManager();
-    // context.read<FavoriteManager>().readFavorites();
     fetchNews();
     loadFavorites();
   }
@@ -40,7 +38,7 @@ class NewsApiState extends State<NewsApiScreen> {
       setState(() {
         newsList = response;
       });
-    } catch (e) {
+    } on DioError catch (e) { // DioErrorを使用していますが、具体的な例外に合わせて変更してください
       print('Failed to fetch news: $e');
     }
   }

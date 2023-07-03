@@ -6,10 +6,10 @@ class NewsFavoriteScreen extends StatefulWidget {
   final FavoriteManager favoriteManager;
 
   @override
-  _NewsFavoriteScreenState createState() => _NewsFavoriteScreenState();
+  NewsFavoriteScreenState createState() => NewsFavoriteScreenState();
 }
 
-class _NewsFavoriteScreenState extends State<NewsFavoriteScreen> {
+class NewsFavoriteScreenState extends State<NewsFavoriteScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

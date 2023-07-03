@@ -4,6 +4,11 @@ import 'package:path_provider/path_provider.dart';
 import 'model/news.dart';
 
 class FavoriteManager {
+
+  FavoriteManager() {
+    readFavorites();
+  }
+
   List<News>? favorites = [];
 
   //ドキュメントディレクトリへのパスを取得
@@ -17,7 +22,9 @@ class FavoriteManager {
     try {
       final file = await _localFile;
       final contents = await file.readAsString();
-      final jsonData = json.decode(contents) as List<Map<String, dynamic>>;
+      final jsonData = (json.decode(contents) as List<dynamic>).
+      cast<Map<String, dynamic>>();
+      // final jsonData = json.decode(contents) as List<Map<String, dynamic>>;
       favorites = jsonData.map((item) =>
           News.fromJson(item as Map<String, dynamic>),).toList();
     } catch (e) {

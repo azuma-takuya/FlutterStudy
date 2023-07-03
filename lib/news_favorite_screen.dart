@@ -1,28 +1,33 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'favorite_manager.dart';
 
-class NewsFavoriteScreen extends StatelessWidget {
-  const NewsFavoriteScreen({super.key});
+class NewsFavoriteScreen extends StatefulWidget {
+  const NewsFavoriteScreen({required this.favoriteManager, super.key});
+  final FavoriteManager favoriteManager;
 
   @override
+  _NewsFavoriteScreenState createState() => _NewsFavoriteScreenState();
+}
+
+class _NewsFavoriteScreenState extends State<NewsFavoriteScreen> {
+  @override
   Widget build(BuildContext context) {
-    final favoritesManager = Provider.of<FavoriteManager>(context);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Favorites'),
       ),
       body: ListView.builder(
-        itemCount: favoritesManager.favorites!.length,
+        itemCount: widget.favoriteManager.favorites!.length,
         itemBuilder: (context, index) {
-          final news = favoritesManager.favorites![index];
+          final news = widget.favoriteManager.favorites![index];
           return ListTile(
             title: Text(news.title ?? 'No title'),
             subtitle: Text(news.url ?? 'No URL'),
             trailing: IconButton(
               icon: const Icon(Icons.delete),
               onPressed: () {
-                favoritesManager.removeFavorite(news);
+                widget.favoriteManager.removeFavorite(news);
+                setState(() {});  // UIを更新する
               },
             ),
           );

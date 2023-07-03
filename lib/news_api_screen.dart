@@ -65,11 +65,15 @@ class NewsApiState extends State<NewsApiScreen> {
           ),
           IconButton(
             icon: const Icon(Icons.list),
-            onPressed: () {
-
-              Navigator.push(context, MaterialPageRoute(builder: (context) =>
-              const NewsFavoriteScreen(),),
+            onPressed: () async {
+              await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>
+                      NewsFavoriteScreen(favoriteManager: favoriteManager),
+                ),
               );
+              setState(() {}); // ナビゲーションから戻ったときにウィジェットを更新します。
             },
           ),
         ],
@@ -85,7 +89,10 @@ class NewsApiState extends State<NewsApiScreen> {
               icon: favoriteManager.isFavorite(news)
                   ? const Icon(Icons.favorite, color: Colors.red)
                   : const Icon(Icons.favorite_border),
-              onPressed: () => favoriteManager.toggleFavorite(news!),
+              onPressed: () {
+                favoriteManager.toggleFavorite(news!);
+                setState(() {}); // <--- Correct usage of setState
+              },
             ),
           );
         },

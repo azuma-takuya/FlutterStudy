@@ -10,9 +10,6 @@ class BarcodeScanScreen extends StatefulWidget {
   State<BarcodeScanScreen> createState() => BarcodeScanState();
 }
 
-//命名を帰る　アンスコつける
-//もしくは別ファイルにして呼び出して使いまわせるようにする
-
 class BarcodeScanState extends State<BarcodeScanScreen> {
   String _scanResult = '';
   final _webViewController = WebViewController();

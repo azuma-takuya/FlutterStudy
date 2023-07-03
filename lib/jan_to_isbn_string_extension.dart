@@ -1,3 +1,5 @@
+// ignore_for_file: join_return_with_assignment
+
 const int janCodeLength = 13;
 const int startIsbnIndex = 3;
 const int endIsbnIndex = 12;

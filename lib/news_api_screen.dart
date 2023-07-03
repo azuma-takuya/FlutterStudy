@@ -2,6 +2,7 @@ import 'package:countup/favorite_manager.dart';
 import 'package:countup/news_favorite_screen.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'api/news_api.dart';
 import 'model/news.dart';
 import 'model/news_result.dart';
@@ -87,7 +88,7 @@ class NewsApiState extends State<NewsApiScreen> {
             ),
           ],
         ),
-        body: ListView.builder(
+        body: ListView.builder( // <- Here
           itemCount: newsList?.articles?.length,
           itemBuilder: (context, index) {
             final news = newsList?.articles![index];
@@ -100,9 +101,15 @@ class NewsApiState extends State<NewsApiScreen> {
                     : const Icon(Icons.favorite_border),
                 onPressed: () {
                   favoriteManager.toggleFavorite(news!);
-                  setState(() {}); // <--- Correct usage of setState
+                  setState(() {});
                 },
               ),
+              onTap: () async {
+                final url = news?.url;
+                if (url != null && await canLaunchUrl(Uri.parse(url))) {
+                  await launch(url);
+                } else {  }
+              },
             );
           },
         ),

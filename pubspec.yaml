@@ -24,6 +24,7 @@ dependencies:
   logger: any
   pedantic_mono: ^1.22.0
   retrofit: '>=4.0.0 <5.0.0'
+  url_launcher: ^6.1.11
   webview_flutter: ^4.2.0
 
 

@@ -18,6 +18,8 @@ class NewsApiState extends State<NewsApiScreen> {
   late final FavoriteManager favoriteManager;
   NewsResult? newsList;
   List<News>? favorites = [];
+  bool isLoading = true;
+
 
   @override
   void initState() {
@@ -31,15 +33,22 @@ class NewsApiState extends State<NewsApiScreen> {
 
   //取得したAPIの情報をnewsListに代入し、状態を更新（再描画）
   Future<void> fetchNews() async {
+    setState(() {
+      isLoading = true; // 非同期処理開始時にローディング状態をtrueに
+    });
+
     try {
       const newsApiKey = String.fromEnvironment('NEWS_API_KEY');
       final response =
       await newsApi.getNews(newsApiKey);
       setState(() {
         newsList = response;
+        isLoading = false; // 非同期処理終了時にローディング状態をfalseに
       });
-    } on DioError catch (e) { // DioErrorを使用していますが、具体的な例外に合わせて変更してください
-      print('Failed to fetch news: $e');
+    } on DioError catch (e) {
+      Text('Failed to fetch news: $e');
+      isLoading = false; // エラーが起きてもローディング状態をfalseに
+
     }
   }
 
@@ -51,50 +60,53 @@ class NewsApiState extends State<NewsApiScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // final favoriteManager = Provider.of<FavoriteManager>(context);
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('News速報'),
-        actions: <Widget>[
-          IconButton(
-            //リフレッシュアイコンを押すたびにニュースを再取得
-            icon: const Icon(Icons.refresh),
-            onPressed: fetchNews,
-          ),
-          IconButton(
-            icon: const Icon(Icons.list),
-            onPressed: () async {
-              await Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) =>
-                      NewsFavoriteScreen(favoriteManager: favoriteManager),
-                ),
-              );
-              setState(() {}); // ナビゲーションから戻ったときにウィジェットを更新します。
-            },
-          ),
-        ],
-      ),
-      body: ListView.builder(
-        itemCount: newsList?.articles?.length,
-        itemBuilder: (context, index) {
-          final news = newsList?.articles![index];
-          return ListTile(
-            title: Text(news?.title ?? 'No title'),
-            subtitle: Text(news?.url ?? 'No URL'),
-            trailing: IconButton(
-              icon: favoriteManager.isFavorite(news)
-                  ? const Icon(Icons.favorite, color: Colors.red)
-                  : const Icon(Icons.favorite_border),
-              onPressed: () {
-                favoriteManager.toggleFavorite(news!);
-                setState(() {}); // <--- Correct usage of setState
+    if (isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    } else {
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text('News速報'),
+          actions: <Widget>[
+            IconButton(
+              //リフレッシュアイコンを押すたびにニュースを再取得
+              icon: const Icon(Icons.refresh),
+              onPressed: fetchNews,
+            ),
+            IconButton(
+              icon: const Icon(Icons.list),
+              onPressed: () async {
+                await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        NewsFavoriteScreen(favoriteManager: favoriteManager),
+                  ),
+                );
+                setState(() {}); // ナビゲーションから戻ったときにウィジェットを更新します。
               },
             ),
-          );
-        },
-      ),
-    );
+          ],
+        ),
+        body: ListView.builder(
+          itemCount: newsList?.articles?.length,
+          itemBuilder: (context, index) {
+            final news = newsList?.articles![index];
+            return ListTile(
+              title: Text(news?.title ?? 'No title'),
+              subtitle: Text(news?.url ?? 'No URL'),
+              trailing: IconButton(
+                icon: favoriteManager.isFavorite(news)
+                    ? const Icon(Icons.favorite, color: Colors.red)
+                    : const Icon(Icons.favorite_border),
+                onPressed: () {
+                  favoriteManager.toggleFavorite(news!);
+                  setState(() {}); // <--- Correct usage of setState
+                },
+              ),
+            );
+          },
+        ),
+      );
+    }
   }
 }

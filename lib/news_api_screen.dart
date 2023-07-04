@@ -68,3 +68,4 @@ class NewsApiScreen extends ConsumerWidget {
     );
   }
 }
+

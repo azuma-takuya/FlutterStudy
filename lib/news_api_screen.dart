@@ -106,9 +106,14 @@ class NewsApiState extends State<NewsApiScreen> {
               ),
               onTap: () async {
                 final url = news?.url;
-                if (url != null && await canLaunchUrl(Uri.parse(url))) {
-                  await launch(url);
-                } else {  }
+                if (url != null) {
+                  final uri = Uri.parse(url);
+                  if (await canLaunchUrl(uri)) {
+                    await launchUrl(uri);
+                  }
+                } else {
+                  const Text('URLの取得に失敗しました。');
+                }
               },
             );
           },

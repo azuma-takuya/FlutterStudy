@@ -33,10 +33,13 @@ class NewsFavoriteScreenState extends State<NewsFavoriteScreen> {
             ),
             onTap: () async {
               final url = news.url;
-              if (url != null && await canLaunch(url)) {
-                await launch(url);
-              } else {
-                // couldn't open the url, do something else
+              if(url != null) {
+                final uri = Uri.parse(url);
+                if (await canLaunchUrl(uri)) {
+                  await launchUrl(uri);
+                } else {
+                  const Text('URLが取得できません。');
+                }
               }
             },
           );

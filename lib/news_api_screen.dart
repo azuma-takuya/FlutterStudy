@@ -1,70 +1,124 @@
+import 'package:countup/favorite_manager.dart';
+import 'package:countup/news_favorite_screen.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-
+import 'package:url_launcher/url_launcher.dart';
 import 'api/news_api.dart';
-import 'favorites_manager.dart';
 import 'model/news.dart';
 import 'model/news_result.dart';
-import 'news_favorite_screen.dart';
 
-final newsProvider = FutureProvider.autoDispose<NewsResult>((ref) async {
-  final dio = Dio();
-  final newsApi = NewsApi(dio);
-  const newsApiKey = String.fromEnvironment('NEWS_API_KEY');
-  final response = await newsApi.getNews(newsApiKey);
-  return response;
-});
-
-final favoritesProvider = ChangeNotifierProvider((ref) => FavoritesManager());
-
-class NewsApiScreen extends ConsumerWidget {
+class NewsApiScreen extends StatefulWidget {
   const NewsApiScreen({super.key});
 
   @override
-  Widget build(BuildContext context, ScopedReader watch) {
-    final newsList = watch(newsProvider);
-    final favoritesManager = watch(favoritesProvider);
+  State<NewsApiScreen> createState() => NewsApiState();
+}
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('News API Fetch'),
-        actions: <Widget>[
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: () => context.refresh(newsProvider),
-          ),
-          IconButton(
-            icon: const Icon(Icons.list),
-            onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) =>
-              const NewsFavoritesScreen(),),
-              );
-            },
-          ),
-        ],
-      ),
-      body: newsList.when(
-        data: (news) =>
-            ListView.builder(
-              itemCount: news.articles.length,
-              itemBuilder: (context, index) {
-                final newsItem = news.articles[index];
-                return ListTile(
-                  title: Text(newsItem.title ?? 'No title'),
-                  subtitle: Text(newsItem.url ?? 'No URL'),
-                  trailing: IconButton(
-                    icon: favoritesManager.isFavorite(newsItem)
-                        ? const Icon(Icons.favorite, color: Colors.red)
-                        : const Icon(Icons.favorite_border),
-                    onPressed: () => favoritesManager.toggleFavorite(newsItem),
+class NewsApiState extends State<NewsApiScreen> {
+  late NewsApi newsApi;
+  late final FavoriteManager favoriteManager;
+  NewsResult? newsList;
+  List<News>? favorites = [];
+  bool isLoading = true;
+
+
+  @override
+  void initState() {
+    super.initState();
+    final dio = Dio();
+    newsApi = NewsApi(dio);
+    favoriteManager = FavoriteManager();
+    fetchNews();
+    loadFavorites();
+  }
+
+  //取得したAPIの情報をnewsListに代入し、状態を更新（再描画）
+  Future<void> fetchNews() async {
+    setState(() {
+      isLoading = true; // 非同期処理開始時にローディング状態をtrueに
+    });
+
+    try {
+      const newsApiKey = String.fromEnvironment('NEWS_API_KEY');
+      final response =
+      await newsApi.getNews(newsApiKey);
+      setState(() {
+        newsList = response;
+        isLoading = false; // 非同期処理終了時にローディング状態をfalseに
+      });
+    } on DioError catch (e) {
+      Text('Failed to fetch news: $e');
+      isLoading = false; // エラーが起きてもローディング状態をfalseに
+
+    }
+  }
+
+  Future<void> loadFavorites() async {
+    await favoriteManager.readFavorites();
+    setState(() {});
+  }
+
+
+  @override
+  Widget build(BuildContext context) {
+    if (isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    } else {
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text('News速報'),
+          actions: <Widget>[
+            IconButton(
+              //リフレッシュアイコンを押すたびにニュースを再取得
+              icon: const Icon(Icons.refresh),
+              onPressed: fetchNews,
+            ),
+            IconButton(
+              icon: const Icon(Icons.list),
+              onPressed: () async {
+                await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        NewsFavoriteScreen(favoriteManager: favoriteManager),
                   ),
                 );
+                setState(() {}); // ナビゲーションから戻ったときにウィジェットを更新します。
               },
             ),
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, stack) => Center(child: Text('Failed to fetch news: $e')),
-      ),
-    );
+          ],
+        ),
+        body: ListView.builder( // <- Here
+          itemCount: newsList?.articles?.length,
+          itemBuilder: (context, index) {
+            final news = newsList?.articles![index];
+            return ListTile(
+              title: Text(news?.title ?? 'No title'),
+              subtitle: Text(news?.url ?? 'No URL'),
+              trailing: IconButton(
+                icon: favoriteManager.isFavorite(news)
+                    ? const Icon(Icons.favorite, color: Colors.red)
+                    : const Icon(Icons.favorite_border),
+                onPressed: () {
+                  favoriteManager.toggleFavorite(news!);
+                  setState(() {});
+                },
+              ),
+              onTap: () async {
+                final url = news?.url;
+                if (url != null) {
+                  final uri = Uri.parse(url);
+                  if (await canLaunchUrl(uri)) {
+                    await launchUrl(uri);
+                  }
+                } else {
+                  const Text('URLの取得に失敗しました。');
+                }
+              },
+            );
+          },
+        ),
+      );
+    }
   }
 }

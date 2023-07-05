@@ -97,7 +97,7 @@ class GithubApiState extends State<GithubApiScreen> {
                     );
                   } else {
                     return ListTile(
-                      title: Text(pullRequest.title ?? 'No title'),
+                      title: Text(pullRequest.title),
                     );
                   }
                 },
